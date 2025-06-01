@@ -8,26 +8,30 @@ import { BaseButton } from "@/shared/ui/buttons/BaseButton";
 import { ChatRoom } from "./ui/ChatRoom";
 import { SendMessageField } from "./ui/SendMessageField";
 
+// Types
+import { IMessage } from "@/entities/Message/model/type";
+import { IRoom } from "@/entities/Room/model/type";
+
 const socket = getSocket()
 
 const Room = () => {
-  const [isJoined, setIsJoined] = useState<boolean>(false)
-  const [messages, setMessages] = useState<any>([])
-  const { roomName } = useParams()
+  const [room, setRoom] = useState<IRoom | null>(null)
+  const [messages, setMessages] = useState<IMessage[]>([])
+  const { roomId } = useParams()
   const router = useRouter()
 
   useEffect(() => {
-    if (!roomName || typeof roomName !== "string") return
+    if (!roomId || typeof roomId !== "string") return
 
-    socket.emit("joinRoom", { roomName })
+    socket.emit("joinRoom", { roomId })
 
     socket.on("joinedRoom", (data) => {
-      setIsJoined(true)
+      setRoom(data)
     })
 
     socket.on("userJoined", ({ id }) => {
       setMessages((prev: any) => [...prev, {
-        message: `${id} joined the room`,
+        text: `${id} joined the room`,
         info: true
       }])
     })
@@ -37,7 +41,7 @@ const Room = () => {
     })
 
     socket.on("newMessage", (data) => {
-      setMessages((prev: any) => [...prev, data])
+      setMessages((prev: IMessage[]) => [...prev, data])
     })
 
     return () => {
@@ -45,7 +49,7 @@ const Room = () => {
       socket.off("userJoined")
       socket.off("errorJoin")
       socket.off("newMessage")
-      socket.emit("leaveRoom", { roomName })
+      socket.emit("leaveRoom", { roomId })
     }
   }, [])
 
@@ -53,16 +57,16 @@ const Room = () => {
     router.push("/")
   }
 
-  const handleSendMessage = (message: any) => {
+  const handleSendMessage = (message: string) => {
     socket.emit("sendMessage", { 
-      roomName,
+      roomId,
       message
     })
   }
 
   return (
     <div className="relative w-full h-[100vh] flex">
-      {!isJoined ? (
+      {!room ? (
         <div className="fixed left-0 top-0 w-full h-full flex items-center justify-center">
           <h1>Loading...</h1>
         </div>
@@ -73,7 +77,7 @@ const Room = () => {
         <div className="w-[20%] bg-black flex flex-col">
           <div className="py-2">
             <div className="text-center mb-2 font-bold capitalize">
-              {roomName}
+              {room.name}
             </div>
             <BaseButton 
               text="Leave room" 

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+// Components
+import { Providers } from "@/shared/providers";
+
 export const metadata: Metadata = {
   title: "FilmMate",
 }
@@ -13,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-[#121212] text-[#E0E0E0]">
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

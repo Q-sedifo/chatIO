@@ -2,9 +2,11 @@ const express = require("express")
 const app = express()
 const http = require("http")
 const { Server } = require("socket.io")
+const { nanoid } = require('nanoid');
 const cors = require("cors")
 
 app.use(cors())
+app.use(express.json())
 
 const server = http.createServer(app)
 
@@ -15,51 +17,68 @@ const io = new Server(server, {
   }
 })
 
-const rooms = new Set()
+const rooms = new Map()
+
+app.get("/rooms", (req, res) => {
+  return res.json(Array.from(rooms.values()))
+})
+
+app.post("/rooms", (req, res) => {
+  const { name } = req.body
+
+  const roomExists = [...rooms.values()].some(room => room.name === name)
+  if (roomExists) {
+    return res.json({ 
+      success: false, 
+      message: "This room already exists" 
+    })
+  }
+
+  const id = nanoid()
+
+  const newRoom = {
+    id,
+    name,
+    creator: "",
+    messages: []
+  };
+
+  rooms.set(id, newRoom);
+  return res.json({ success: true, newRoom })
+})
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`)
 
   // Sending message to room
-  socket.on("sendMessage", ({ roomName, message }) => {
-    if (!roomName || !message) return
+  socket.on("sendMessage", ({ roomId, message }) => {
+    if (!roomId || !message) return
 
-    io.to(roomName).emit("newMessage", {
-      message,
+    io.to(roomId).emit("newMessage", {
+      id: nanoid(),
+      text: message,
       sender: socket.id,
       timestamp: new Date().toISOString(),
     })
   })
 
-  // Getting rooms
-  socket.on("getRooms", () => {
-    socket.emit("roomsList", Array.from(rooms))
-  })
+  // Joining the room
+  socket.on("joinRoom", ({ roomId }) => {
+    const room = rooms.get(roomId)
 
-  // Join room
-  socket.on("joinRoom", ({ roomName }) => {
-    if (!rooms.has(roomName)) {
+    if (!room) {
       socket.emit("errorJoin", { error: "This room does not exist" })
       return
     }
 
-    socket.join(roomName)
-    socket.emit("joinedRoom", { roomName })
-    socket.to(roomName).emit("userJoined", { id: socket.id })
+    socket.join(roomId)
+    socket.emit("joinedRoom", room)
+    socket.to(roomId).emit("userJoined", { id: socket.id })
   })
 
   // Leaving room
-  socket.on("leaveRoom", ({ roomName }) => {
-    socket.leave(roomName)
-  })
-
-  // Creating new room
-  socket.on("createRoom", (data) => {
-    const { name } = data
-    if (rooms.has(name)) return
-    
-    rooms.add(name)
-    io.emit("roomCreated", { name })
+  socket.on("leaveRoom", ({ roomId }) => {
+    socket.leave(roomId)
   })
 })
 

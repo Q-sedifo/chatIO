@@ -3,11 +3,8 @@ import React, { useEffect, useRef } from "react";
 // Components
 import Box from "@/shared/ui/Box";
 
-interface IMessage {
-  message: string;
-  sender: string;
-  timestamp: Date;
-}
+// Types
+import { IMessage } from "@/entities/Message/model/type";
 
 interface IChatRoomProps {
   messages: IMessage[];
@@ -27,7 +24,7 @@ export const ChatRoom: React.FC<IChatRoomProps> = ({ messages }) => {
           <Box className="max-w-[60%]">
             <Box.Content className="break-all">
               <div><small className="text-gray-500">John</small></div>
-              {message.message}
+              {message.text}
             </Box.Content>
           </Box>
         </div>

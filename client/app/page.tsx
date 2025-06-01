@@ -1,49 +1,42 @@
 "use client"
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getSocket } from "@/shared/libs/socket";
+import { useQuery } from "@tanstack/react-query";
+
+// Types
+import { IRoom } from "@/entities/Room/model/type";
 
 // Components
 import Box from "@/shared/ui/Box";
 import { CreateRoom } from "./(ui)/CreateRoom";
 import { Room } from "@/entities/Room/ui/Room";
 
-const socket = getSocket()
+// Requests
+import { getRooms, createRoom } from "@/entities/Room/api";
 
 export default function Home() {
-  const [rooms, setRooms] = useState<string[]>([])
   const router = useRouter()
 
-  const handleCreateRoom = (roomName: string) => {
-    socket.emit("createRoom", { name: roomName })
-    router.push(`/rooms/${roomName}`)
+  const { data, isLoading } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: () => getRooms()
+  })
+
+  const handleCreateRoom = async (roomName: string) => {
+    const { success, newRoom } = await createRoom(roomName)
+    
+    if (!success) return
+    router.push(`/rooms/${newRoom.id}`)
   }
-
-  useEffect(() => {
-    socket.emit("getRooms")
-
-    socket.on("roomsList", (roomList: string[]) => {
-      setRooms(roomList)
-    })
-
-    socket.on("roomCreated", (data) => {
-      setRooms((prev) => [...prev, data.name])
-    })
-
-    return () => {
-      socket.off("roomCreated")
-      socket.off("roomsList")
-    }
-  }, [])
 
   return (
     <div className="flex flex-col gap-5 p-5">
       <CreateRoom handleCreateRoom={handleCreateRoom}/>
       <Box>
-        <Box.Title>Rooms {rooms?.length}</Box.Title>
+        <Box.Title>Rooms {data?.length}</Box.Title>
         <Box.Content className="w-full flex flex-col gap-2">
-          {rooms.map((room, index) => (
-            <Room key={room + index} room={room}/>
+          {isLoading && (<>Loading...</>)}
+          {data && data.map((room: IRoom, index: number) => (
+            <Room key={room.id + index} room={room} />
           ))}
         </Box.Content>
       </Box>
