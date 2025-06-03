@@ -5,7 +5,11 @@ const { Server } = require("socket.io")
 const { nanoid } = require('nanoid');
 const cors = require("cors")
 
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}))
+
 app.use(express.json())
 
 const server = http.createServer(app)
@@ -24,23 +28,15 @@ app.get("/rooms", (req, res) => {
 })
 
 app.post("/rooms", (req, res) => {
-  const { name } = req.body
-
-  const roomExists = [...rooms.values()].some(room => room.name === name)
-  if (roomExists) {
-    return res.json({ 
-      success: false, 
-      message: "This room already exists" 
-    })
-  }
-
+  const user = JSON.parse(req.headers["x-user"])
   const id = nanoid()
 
   const newRoom = {
     id,
-    name,
-    creator: "",
-    messages: []
+    name: "",
+    creator: user,
+    messages: [],
+    isPrivate: false
   };
 
   rooms.set(id, newRoom);
@@ -49,6 +45,7 @@ app.post("/rooms", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log(`User connected ${socket.id}`)
+  const user = socket.handshake.auth
 
   // Sending message to room
   socket.on("sendMessage", ({ roomId, message }) => {
@@ -57,7 +54,7 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("newMessage", {
       id: nanoid(),
       text: message,
-      sender: socket.id,
+      sender: user,
       timestamp: new Date().toISOString(),
     })
   })
@@ -73,12 +70,13 @@ io.on("connection", (socket) => {
 
     socket.join(roomId)
     socket.emit("joinedRoom", room)
-    socket.to(roomId).emit("userJoined", { id: socket.id })
+    socket.to(roomId).emit("userJoined", user)
   })
 
   // Leaving room
   socket.on("leaveRoom", ({ roomId }) => {
     socket.leave(roomId)
+    socket.to(roomId).emit("userLeaved", user)
   })
 })
 

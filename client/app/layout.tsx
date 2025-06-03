@@ -15,9 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-[#121212] text-[#E0E0E0]">
+      <body className="relative bg-[#121212] text-[#E0E0E0]">
         <Providers>
           {children}
+          <div id="modal"></div>
         </Providers>
       </body>
     </html>

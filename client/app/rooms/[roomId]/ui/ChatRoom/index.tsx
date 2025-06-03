@@ -1,16 +1,19 @@
 import React, { useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion"
 
 // Components
-import Box from "@/shared/ui/Box";
+import { Message } from "@/entities/Message/ui/Message";
 
 // Types
 import { IMessage } from "@/entities/Message/model/type";
+import { IUser } from "@/entities/User/model/type";
 
 interface IChatRoomProps {
   messages: IMessage[];
+  user?: IUser;
 }
 
-export const ChatRoom: React.FC<IChatRoomProps> = ({ messages }) => {
+export const ChatRoom: React.FC<IChatRoomProps> = ({ messages, user }) => {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -18,17 +21,20 @@ export const ChatRoom: React.FC<IChatRoomProps> = ({ messages }) => {
   }, [messages])
 
   return (
-    <div className="w-full h-[100%] overflow-y-auto bg-amber-500">
-      {messages.map((message, index) => (
-        <div className="p-2" key={index}>
-          <Box className="max-w-[60%]">
-            <Box.Content className="break-all">
-              <div><small className="text-gray-500">John</small></div>
-              {message.text}
-            </Box.Content>
-          </Box>
-        </div>
-      ))}
+    <div className="w-full max-h-[100%] flex-2 overflow-y-auto bg-emerald-500">
+      <AnimatePresence initial={false}>
+        {messages.map((message: IMessage) => (
+          <motion.div
+            key={message.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+          >
+            <Message message={message} user={user}/>
+          </motion.div>
+        ))}
+      </AnimatePresence>
       <div ref={bottomRef} />
     </div>  
   )

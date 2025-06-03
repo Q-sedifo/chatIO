@@ -5,6 +5,7 @@ export interface IRoom {
   name: string;
   creator: string;
   messages: IMessage[];
+  isPrivate: boolean;
 }
 
 export interface ICreateRoomRequest {

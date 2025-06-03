@@ -3,7 +3,8 @@ import cn from "classnames";
 
 interface IBoxProps {
   children: React.ReactNode;
-  className?: string; 
+  className?: string;
+  onClick?: () => void;
 }
 
 interface IBoxSubComponent extends IBoxProps {
@@ -14,9 +15,9 @@ interface IBoxSubComponent extends IBoxProps {
 
 type BoxComponent = React.FC<IBoxProps> & IBoxSubComponent;
 
-const BoxBase: React.FC<IBoxProps> = ({ children, className }) => {
+const BoxBase: React.FC<IBoxProps> = ({ children, className, onClick }) => {
   return (
-    <div className={cn("w-full flex flex-col gap-2 p-3 bg-[#212121] rounded-lg", className)}>
+    <div className={cn("w-full flex flex-col gap-2 p-5 bg-[#212121] rounded-xl", className)} onClick={onClick}>
       { children }
     </div>
   )

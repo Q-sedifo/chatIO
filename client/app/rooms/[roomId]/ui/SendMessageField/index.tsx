@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 // Components
 import { BaseButton } from "@/shared/ui/buttons/BaseButton";
@@ -10,12 +10,14 @@ interface ISendMessageProps {
 
 export const SendMessageField: React.FC<ISendMessageProps> = ({ onSendMessage }) => {
   const [message, setMessage] = useState<string>("")
+  const messageInput = useRef<HTMLInputElement>(null)
 
   const handleSendMessage = () => {
     if (!message) return
 
     onSendMessage(message)
     setMessage("")
+    messageInput?.current?.focus()
   }
 
   const handleTypeMessage = (message: string) => {
@@ -29,10 +31,12 @@ export const SendMessageField: React.FC<ISendMessageProps> = ({ onSendMessage })
         onChange={handleTypeMessage}
         value={message}
         className="w-full"
+        ref={messageInput}
       />
       <BaseButton 
         text="Send" 
         onClick={handleSendMessage}
+        disabled={!message}
       />
     </div>
   )

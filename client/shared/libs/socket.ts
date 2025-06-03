@@ -1,11 +1,15 @@
 import { io, Socket } from "socket.io-client";
 
+// Types
+import { IUser } from "@/entities/User/model/type";
+
 let socket: Socket | null = null
 
-export const getSocket = (): Socket => {
+export const getSocket = (user: IUser | undefined): Socket => {
   if (!socket) {
-    socket = io("http://localhost:3001", {
+    socket = io(process.env.NEXT_PUBLIC_SERVER_API, {
       transports: ["websocket"],
+      auth: user
     })
   }
 
