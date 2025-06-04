@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 // Components
 import { Modal } from "@/shared/ui/Modals/index";
 import { UserAvatar } from "../../UserAvatar";
+import { ExitAccountButton } from "@/shared/ui/buttons/ExitAccountButton";
 import Box from "@/shared/ui/Box";
 
 interface IProfileModalProps {
@@ -25,6 +26,7 @@ export const ProfileModal: React.FC<IProfileModalProps> = ({ onClose }) => {
               {data?.user?.email}
             </span>
           </div>
+          <ExitAccountButton/>
         </Box.Content>
       </Box>
     </Modal>

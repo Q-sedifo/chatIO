@@ -5,7 +5,12 @@ export const authConfig: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string
+      clientSecret: process.env.GOOGLE_SECRET as string,
+      authorization: {
+        params: {
+          scope: 'https://www.googleapis.com/auth/drive.readonly openid email profile',
+        },
+      },
     })
   ],
   callbacks: {
