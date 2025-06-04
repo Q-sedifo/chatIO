@@ -76,23 +76,21 @@ const Room = () => {
     })
   }
 
-  return (
+  return room ? (
     <div className="w-full h-[100vh] flex flex-col overflow-y-hidden">
       <Header room={room}/>
       <div className="w-full h-[100%] flex overflow-y-hidden">
-        {!room ? (
-          <Loader/>
-        ) : (<>
-          <div className="flex flex-1 items-center justify-center">
-            <BaseButton text="Link film"/>
-          </div>
-          <div className="w-[20%] min-w-[300px] max-h-[100%] overflow-y-hidden bg-black flex flex-col">
-            <ChatRoom messages={messages} user={user}/>
-            <SendMessageField onSendMessage={handleSendMessage}/>
-          </div>
-        </>)}
+        <div className="flex flex-1 items-center justify-center">
+          <BaseButton text="Link film"/>
         </div>
+        <div className="w-[20%] min-w-[300px] max-h-[100%] overflow-y-hidden bg-black flex flex-col">
+          <ChatRoom messages={messages} user={user}/>
+          <SendMessageField onSendMessage={handleSendMessage}/>
+        </div>
+      </div>
     </div>
+  ) : (
+    <Loader/>
   )
 }
 

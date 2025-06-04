@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 
 export const Loader = () => {
-
   useEffect(() => {
     const body = document.body
     body.style.overflowY = "hidden"
