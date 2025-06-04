@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // Components
 import { BaseButton } from "@/shared/ui/buttons/BaseButton";
@@ -17,18 +17,35 @@ export const SendMessageField: React.FC<ISendMessageProps> = ({ onSendMessage })
 
     onSendMessage(message)
     setMessage("")
-    messageInput?.current?.focus()
+    // Focus input after sending message
+    focusMessageField()
   }
 
   const handleTypeMessage = (message: string) => {
     setMessage(() => message)
   }
 
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      handleSendMessage()
+    }
+  }
+
+  const focusMessageField = () => {
+    messageInput?.current?.focus()
+  }
+
+  useEffect(() => {
+    focusMessageField()
+  }, [])
+
   return (
     <div className="w-full flex gap-2 p-2">
       <BaseInput
         placeholder="Message"
         onChange={handleTypeMessage}
+        onKeyDown={handleInputKeyDown}
         value={message}
         className="w-full"
         ref={messageInput}

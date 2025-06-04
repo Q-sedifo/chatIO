@@ -1,9 +1,9 @@
 import React from "react";
 import cn from "classnames";
+import { useSession } from "next-auth/react";
 
 // Types
 import { IMessage } from "../../model/type";
-import { IUser } from "@/entities/User/model/type";
 
 // Components
 import Box from "@/shared/ui/Box";
@@ -11,11 +11,15 @@ import Image from "next/image";
 
 interface IMessageProps {
   message: IMessage;
-  user?: IUser | undefined;
 }
 
-export const Message: React.FC<IMessageProps> = ({ message, user }) => {
+export const Message: React.FC<IMessageProps> = ({ message }) => {
   const isInfoMessage = message?.info
+
+  // Getting auth user
+  const { data } = useSession()
+  const user = data?.user
+
   const isMyMessage = user?.id === message?.sender?.id
 
   return (
@@ -38,7 +42,7 @@ export const Message: React.FC<IMessageProps> = ({ message, user }) => {
           "rounded-br-none": isMyMessage,
           "rounded-bl-none": !isMyMessage,
         })}>
-          <Box.Content className="break-keep text-xs">
+          <Box.Content className="break-keep text-xs overflow-x-hidden">
             <div>
               <small className="text-gray-500">
                 {isMyMessage ? "You" : message?.sender?.name}
