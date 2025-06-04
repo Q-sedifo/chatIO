@@ -23,7 +23,7 @@ export const CreateRoomBtn = () => {
   return (
     <BaseButton 
       onClick={handleCreateRoom} 
-      text="Create room"
+      text="Створити кімнату"
       icon={<IoAdd/>}
     />
   )

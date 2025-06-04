@@ -45,7 +45,7 @@ export const Message: React.FC<IMessageProps> = ({ message }) => {
           <Box.Content className="break-keep text-xs overflow-x-hidden">
             <div>
               <small className="text-gray-500">
-                {isMyMessage ? "You" : message?.sender?.name}
+                {isMyMessage ? "Ви" : message?.sender?.name}
               </small>
             </div>
             <span className="text-lg">{message.text}</span>

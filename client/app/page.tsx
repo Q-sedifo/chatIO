@@ -8,16 +8,12 @@ import { Rooms } from "./(ui)/Rooms";
 
 // Requests
 import { getRooms } from "@/entities/Room/api";
-import { useSession } from "next-auth/react";
 
 export default function Home() {
   const { data, isLoading } = useQuery({
     queryKey: ["rooms"],
     queryFn: () => getRooms()
   })
-
-  const session = useSession()
-  console.log(session)
 
   return (
     <>

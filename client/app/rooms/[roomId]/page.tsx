@@ -16,7 +16,7 @@ const RoomPage = async ({ params }: { params: Promise<IParamsProps> }) => {
 
   return (
     <RoomProvider>
-      <Room/>
+      <Room />
     </RoomProvider>
   )
 }

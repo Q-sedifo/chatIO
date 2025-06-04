@@ -28,7 +28,7 @@ export const Header: React.FC<IHeaderProps> = ({ room }) => {
       </div>
       {room && (
         <BaseButton 
-          text="Leave room" 
+          text="Залишити кімнату" 
           onClick={handleLeaveRoom} 
           className="bg-red-500"
         />

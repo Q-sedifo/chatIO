@@ -13,12 +13,12 @@ export const SearchRoom = () => {
 
   return (
     <Box>
-      <Box.Title>Search room</Box.Title>
+      <Box.Title>Пошук</Box.Title>
       <Box.Content className="w-full flex items-center gap-2">
         <BaseInput 
           onChange={handleSetRoomName} 
           value={roomName}
-          placeholder="Room name"
+          placeholder="Назва"
           className="w-[300px]"
         />
       </Box.Content>

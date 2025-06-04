@@ -30,7 +30,7 @@ export const ChatRoom = () => {
     socket.on("userJoined", (user) => {
       setMessages((prev: IMessage[]) => [...prev, {
         id: nanoid(),
-        text: `${user.name} joined the room`,
+        text: `${user.name} приєднався`,
         info: true
       }])
     })
@@ -38,7 +38,7 @@ export const ChatRoom = () => {
     socket.on("userLeaved", (user) => {
       setMessages((prev: IMessage[]) => [...prev, {
         id: nanoid(),
-        text: `${user.name} leaved the room`,
+        text: `${user.name} вийшов`,
         info: true
       }])
     })

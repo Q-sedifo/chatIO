@@ -5,10 +5,10 @@ import { getSocket } from "@/shared/libs/socket";
 import { useSession } from "next-auth/react";
 
 // Components
-import { BaseButton } from "@/shared/ui/buttons/BaseButton";
 import { ChatRoom } from "@/app/rooms/[roomId]/ui/ChatRoom";
 import { Loader } from "@/shared/ui/Loader";
 import { Header } from "@/widgets/Header";
+import { GoogleDriveContentField } from "@/app/rooms/[roomId]/ui/GoogleDriveContentField";
 
 // Context
 import { useRoom } from "@/app/rooms/[roomId]/context/RoomContext";
@@ -49,9 +49,7 @@ export const Room = () => {
     <div className="w-full h-[100vh] flex flex-col overflow-y-hidden">
       <Header room={room}/>
       <div className="w-full h-[100%] flex overflow-y-hidden">
-        <div className="flex flex-1 items-center justify-center">
-          <BaseButton text="Link film"/>
-        </div>
+        <GoogleDriveContentField/>
         <ChatRoom/>
       </div>
     </div>

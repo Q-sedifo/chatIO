@@ -13,7 +13,7 @@ export const ExitAccountButton = () => {
   return (
     <BaseButton 
       className="bg-red-500"
-      text="Exit"
+      text="Вийти"
       onClick={handleButtonClick}
     />
   )

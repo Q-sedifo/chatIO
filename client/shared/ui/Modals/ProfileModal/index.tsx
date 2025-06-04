@@ -17,7 +17,7 @@ export const ProfileModal: React.FC<IProfileModalProps> = ({ onClose }) => {
   return (
     <Modal onClose={onClose}>
       <Box className="w-fit">
-        <Box.Title>Profile</Box.Title>
+        <Box.Title>Профіль</Box.Title>
         <Box.Content className="flex items-center gap-5">
           <UserAvatar/>
           <div className="flex flex-col">

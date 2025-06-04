@@ -43,7 +43,7 @@ export const SendMessageField: React.FC<ISendMessageProps> = ({ onSendMessage })
   return (
     <div className="w-full flex gap-2 p-2">
       <BaseInput
-        placeholder="Message"
+        placeholder="Повідомлення"
         onChange={handleTypeMessage}
         onKeyDown={handleInputKeyDown}
         value={message}
@@ -51,7 +51,7 @@ export const SendMessageField: React.FC<ISendMessageProps> = ({ onSendMessage })
         ref={messageInput}
       />
       <BaseButton 
-        text="Send" 
+        text="Відправити" 
         onClick={handleSendMessage}
         disabled={!message}
       />

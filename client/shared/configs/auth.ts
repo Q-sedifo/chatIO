@@ -11,25 +11,32 @@ export const authConfig: AuthOptions = {
           scope: 'https://www.googleapis.com/auth/drive.readonly openid email profile',
         },
       },
-    })
+    }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      // Adding user id to auth session
+    async jwt({ token, user, account }) {
+
       if (user) {
         token.id = user.id
       }
-      return token
+      
+      if (account?.access_token) {
+        token.accessToken = account.access_token
+      }
+
+      return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
         (session.user as { id: string }).id = token.id as string
+        
+        (session as any).accessToken = token.accessToken
       }
-      
+
       return session
     },
   },
   pages: {
-    signIn: "/signin"
-  }
+    signIn: "/signin",
+  },
 }
