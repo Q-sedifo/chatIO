@@ -9,6 +9,7 @@ import { IRoom } from "@/entities/Room/model/type";
 import { BaseButton } from "@/shared/ui/buttons/BaseButton";
 import { CreateRoomBtn } from "./CreateRoomBtn";
 import { AvatarBtn } from "./AvatarBtn";
+import { RoomUsers } from "./RoomUsers";
 
 interface IHeaderProps {
   room?: IRoom | null;
@@ -27,11 +28,14 @@ export const Header: React.FC<IHeaderProps> = ({ room }) => {
         <AvatarBtn/>
       </div>
       {room && (
-        <BaseButton 
-          text="Залишити кімнату" 
-          onClick={handleLeaveRoom} 
-          className="bg-red-500"
-        />
+        <div className="flex items-center gap-2">
+          <BaseButton 
+            text="Залишити кімнату" 
+            onClick={handleLeaveRoom} 
+            className="bg-red-500"
+          />
+          <RoomUsers/>
+        </div>
       )}
       {!room && <CreateRoomBtn/>}
     </header>
