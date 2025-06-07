@@ -36,8 +36,9 @@ app.post("/rooms", (req, res) => {
     name: "",
     creator: user,
     messages: [],
+    users: [],
     isPrivate: false
-  };
+  }
 
   rooms.set(id, newRoom);
   return res.json({ success: true, newRoom })
@@ -60,7 +61,7 @@ io.on("connection", (socket) => {
   })
 
   // Joining the room
-  socket.on("joinRoom", ({ roomId }) => {
+  socket.on("joinRoom", (roomId) => {
     const room = rooms.get(roomId)
 
     if (!room) {
@@ -69,14 +70,24 @@ io.on("connection", (socket) => {
     }
 
     socket.join(roomId)
-    socket.emit("joinedRoom", room)
-    socket.to(roomId).emit("userJoined", user)
+
+    if (!room.users.find((cUser) => cUser.id === user.id)) {
+      room.users.push(user)
+    }
+
+    io.to(roomId).emit("joinedRoom", { room, user })
   })
 
   // Leaving room
-  socket.on("leaveRoom", ({ roomId }) => {
+  socket.on("leaveRoom", ( roomId ) => {
+    const room = rooms.get(roomId)
+    if (!room) return
+
     socket.leave(roomId)
-    socket.to(roomId).emit("userLeaved", user)
+
+    room.users = room.users.filter((cUser => cUser.id !== user.id))
+
+    socket.to(roomId).emit("userLeaved", { room, user })
   })
 })
 
