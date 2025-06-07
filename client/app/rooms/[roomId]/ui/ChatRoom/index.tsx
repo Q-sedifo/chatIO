@@ -27,20 +27,14 @@ export const ChatRoom = () => {
   const socket = getSocket(user)
 
   useEffect(() => {
-    socket.on("userJoined", (user) => {
-      setMessages((prev: IMessage[]) => [...prev, {
-        id: nanoid(),
-        text: `${user.name} приєднався`,
-        info: true
-      }])
+    socket.on("joinedRoom", ({ user }) => {
+      const message = `${user.name} приєднався`
+      handleReceiveMessage(message)
     })
 
-    socket.on("userLeaved", (user) => {
-      setMessages((prev: IMessage[]) => [...prev, {
-        id: nanoid(),
-        text: `${user.name} вийшов`,
-        info: true
-      }])
+    socket.on("userLeaved", ({ user }) => {
+      const message = `${user.name} вийшов`
+      handleReceiveMessage(message)
     })
 
     socket.on("newMessage", (data) => {
@@ -48,7 +42,7 @@ export const ChatRoom = () => {
     })
 
     return () => {
-      socket.off("userJoined")
+      socket.off("joinedRoom")
       socket.off("userLeaved")
       socket.off("newMessage")
     }
@@ -66,6 +60,14 @@ export const ChatRoom = () => {
       roomId: room?.id,
       message,
     })
+  }
+
+  const handleReceiveMessage = (message: string) => {
+    setMessages((prev: IMessage[]) => [...prev, {
+      id: nanoid(),
+      text: message,
+      info: true
+    }])
   }
 
   return (

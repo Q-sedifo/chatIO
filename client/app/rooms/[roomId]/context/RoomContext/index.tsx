@@ -16,6 +16,8 @@ const RoomContext = createContext<IRoomContext>({
 export const RoomContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [room, setRoom] = useState<IRoom | null>(null)
 
+  console.log("room", room)
+
   const handleSetRoom = (room: IRoom) => {
     setRoom(room)
   }

@@ -29,10 +29,14 @@ export const Room = () => {
   useEffect(() => {
     if (!roomId || typeof roomId !== "string") return
 
-    socket.emit("joinRoom", { roomId })
+    socket.emit("joinRoom", roomId)
 
-    socket.once("joinedRoom", (data) => {
-      setRoom(data)
+    socket.on("joinedRoom", ({ room }) => {
+      setRoom(room)
+    })
+
+    socket.on("userLeaved", ({ room }) =>{
+      setRoom(room)
     })
 
     socket.on("errorJoin", () => {
@@ -40,7 +44,11 @@ export const Room = () => {
     })
 
     return () => {
+      socket.emit("leaveRoom", roomId)
+
+      // Clean socket events
       socket.off("joinedRoom")
+      socket.off("userJoined")
       socket.off("errorJoin")
     }
   }, [])

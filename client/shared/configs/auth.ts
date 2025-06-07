@@ -11,25 +11,25 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         client_secret: process.env.GOOGLE_SECRET!,
         grant_type: "refresh_token",
         refresh_token: token.refreshToken as string,
-      });
+      })
 
     const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-    });
+    })
 
-    const refreshedTokens = await res.json();
+    const refreshedTokens = await res.json()
 
-    if (!res.ok) throw refreshedTokens;
+    if (!res.ok) throw refreshedTokens
 
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
-    };
+    }
   } catch (error) {
     console.error("Помилка оновлення токена", error)
     return {
@@ -88,4 +88,4 @@ export const authConfig: AuthOptions = {
   pages: {
     signIn: "/signin",
   },
-};
+}
