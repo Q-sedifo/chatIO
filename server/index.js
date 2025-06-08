@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", (roomId) => {
     const room = rooms.get(roomId)
 
-    if (!room) {
+    if (!room || !user?.id) {
       socket.emit("errorJoin", { error: "This room does not exist" })
       return
     }

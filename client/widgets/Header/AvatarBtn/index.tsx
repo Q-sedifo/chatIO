@@ -19,7 +19,10 @@ export const AvatarBtn = () => {
   }
 
   return (<>
-    <UserAvatar onClick={hanleAvatarClick}/>
+    <UserAvatar 
+      onClick={hanleAvatarClick}
+      withIndicator={true}
+    />
     {isProfileModalOpen && (
       <ProfileModal onClose={handleCloseProfileModal}/>
     )}

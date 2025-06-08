@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { nanoid } from "nanoid";
 
@@ -17,7 +17,6 @@ import { IMessage } from "@/entities/Message/model/type";
 
 export const ChatRoom = () => {
   const [messages, setMessages] = useState<IMessage[]>([])
-  const bottomRef = useRef<HTMLDivElement>(null)
   const { room } = useRoom()
 
   // Getting auth user
@@ -48,13 +47,6 @@ export const ChatRoom = () => {
     }
   }, [])
 
-  useEffect(() => {
-    // Scroll to chat bottom if new message received
-    bottomRef.current?.scrollIntoView({ 
-      behavior: "smooth" 
-    })
-  }, [messages])
-
   const handleSendMessage = (message: string) => {
     socket.emit("sendMessage", { 
       roomId: room?.id,
@@ -71,7 +63,7 @@ export const ChatRoom = () => {
   }
 
   return (
-    <div className="w-[20%] min-w-[300px] max-h-[100%] overflow-y-hidden bg-black flex flex-col">
+    <div className="w-[20%] min-w-[300px] max-h-[100%] h-[100%] overflow-y-hidden bg-black flex flex-col">
       <Messages messages={messages}/>
       <SendMessageField onSendMessage={handleSendMessage}/>
     </div>  

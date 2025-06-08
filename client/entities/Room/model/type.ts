@@ -5,7 +5,7 @@ import { IUser } from "@/entities/User/model/type";
 export interface IRoom {
   id: string;
   name: string;
-  creator: string;
+  creator: IUser;
   messages: IMessage[];
   users: IUser[];
   isPrivate: boolean;

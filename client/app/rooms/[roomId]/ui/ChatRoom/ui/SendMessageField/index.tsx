@@ -4,6 +4,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { BaseButton } from "@/shared/ui/buttons/BaseButton";
 import { BaseInput } from "@/shared/ui/inputs/BaseInput";
 
+// Icons
+import { GrSend } from "react-icons/gr";
+
 interface ISendMessageProps {
   onSendMessage: (message: string) => void;
 }
@@ -43,7 +46,7 @@ export const SendMessageField: React.FC<ISendMessageProps> = ({ onSendMessage })
   return (
     <div className="w-full flex gap-2 p-2">
       <BaseInput
-        placeholder="Повідомлення"
+        placeholder="Повідомлення..."
         onChange={handleTypeMessage}
         onKeyDown={handleInputKeyDown}
         value={message}
@@ -51,7 +54,7 @@ export const SendMessageField: React.FC<ISendMessageProps> = ({ onSendMessage })
         ref={messageInput}
       />
       <BaseButton 
-        text="Відправити" 
+        icon={<GrSend className="w-[20px] h-[20px]"/>} 
         onClick={handleSendMessage}
         disabled={!message}
       />

@@ -1,6 +1,7 @@
 "use client"
 import React from "react";
 import { useRouter } from "next/navigation";
+import cn from "classnames";
 
 // Types
 import { IRoom } from "@/entities/Room/model/type";
@@ -23,7 +24,9 @@ export const Header: React.FC<IHeaderProps> = ({ room }) => {
   }
 
   return (
-    <header className="sticky top-0 left-0 w-full flex items-center justify-between gap-2 px-5 py-3 bg-[#212121]">
+    <header className={cn("sticky top-0 left-0 w-full flex items-center justify-between gap-2 px-5 py-3 bg-[#212121]", {
+      room: "relative"
+    })}>
       <div className="flex items-center gap-2">
         <AvatarBtn/>
       </div>

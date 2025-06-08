@@ -18,7 +18,7 @@ export const GoogleBtn = () => {
 
   return (
     <BaseButton 
-      text="Sign in with Google"
+      text="Увійти з Google"
       onClick={handleSignInClick}
     />
   )

@@ -19,7 +19,7 @@ export const ProfileModal: React.FC<IProfileModalProps> = ({ onClose }) => {
       <Box className="w-fit">
         <Box.Title>Профіль</Box.Title>
         <Box.Content className="flex items-center gap-5">
-          <UserAvatar/>
+          <UserAvatar withIndicator={true}/>
           <div className="flex flex-col">
             {data?.user?.name}
             <span className="text-gray-500">
