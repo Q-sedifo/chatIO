@@ -1,16 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authConfig } from "@/shared/configs/auth";
-
-type SessionWithToken = {
-  accessToken?: string
-}
+import { serverApi } from "@/shared/api/serverApi";
 
 export async function GET(req: NextRequest, context: unknown) {
   const { params } = context as { params: { id: string } }
 
-  const session = await getServerSession(authConfig) as SessionWithToken
-  const accessToken = session?.accessToken
+  const url = new URL(req.url)
+  const roomId = url.searchParams.get("roomId")
+
+  // Getting google drive access token for all users
+  const { data } = await serverApi.get(`/rooms/${roomId}/getToken`)
+  const accessToken = data.accessToken
 
   if (!accessToken) {
     return new NextResponse("Unauthorized", { status: 401 })
@@ -34,6 +33,8 @@ export async function GET(req: NextRequest, context: unknown) {
       headers,
     }
   )
+
+  console.log("test", googleRes)
 
   const resHeaders = new Headers()
   for (const [key, value] of googleRes.headers.entries()) {

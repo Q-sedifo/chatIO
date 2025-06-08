@@ -1,6 +1,7 @@
 // Types
 import { IMessage } from "@/entities/Message/model/type";
 import { IUser } from "@/entities/User/model/type";
+import { IGoogleDriveVideo } from "@/entities/Video/model/type";
 
 export interface IRoom {
   id: string;
@@ -9,6 +10,7 @@ export interface IRoom {
   messages: IMessage[];
   users: IUser[];
   isPrivate: boolean;
+  video?: IGoogleDriveVideo;
 }
 
 export interface ICreateRoomRequest {

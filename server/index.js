@@ -22,9 +22,22 @@ const io = new Server(server, {
 })
 
 const rooms = new Map()
+const hostTokens = new Map()
 
 app.get("/rooms", (req, res) => {
   return res.json(Array.from(rooms.values()))
+})
+
+app.get("/rooms/:id/getToken", (req, res) => {
+  const roomId = req.params.id
+
+  const token = hostTokens.get(roomId)
+
+  if (!token) {
+    return res.status(404).json({ error: "No token for this room" })
+  }
+
+  return res.json({ accessToken: token })
 })
 
 app.post("/rooms", (req, res) => {
@@ -37,7 +50,8 @@ app.post("/rooms", (req, res) => {
     creator: user,
     messages: [],
     users: [],
-    isPrivate: false
+    isPrivate: false,
+    video: null
   }
 
   rooms.set(id, newRoom);
@@ -58,6 +72,18 @@ io.on("connection", (socket) => {
       sender: user,
       timestamp: new Date().toISOString(),
     })
+  })
+
+  // Setting video for room
+  socket.on("setVideoForRoom", ({ roomId, video, accessToken }) => {
+    const room = rooms.get(roomId)
+
+    if (!room || !accessToken) return
+
+    hostTokens.set(roomId, accessToken)
+
+    room.video = video
+    io.to(roomId).emit("selectedVideo", room)
   })
 
   // Joining the room
