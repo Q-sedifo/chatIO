@@ -1,26 +1,32 @@
 "use client"
-
-import { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRoom } from "../../context/RoomContext";
 
 // Components
-import { BaseButton } from '@/shared/ui/buttons/BaseButton'
+import { BaseButton } from "@/shared/ui/buttons/BaseButton";
 
-type DriveFile = {
-  id: string
-  name: string
-  mimeType: string
+type TDriveFile = {
+  id: string;
+  name: string;
+  mimeType: string;
 }
 
 export const GoogleDriveContentField = () => {
-  const { data: session } = useSession()
-  const [videos, setVideos] = useState<DriveFile[]>([])
-  const [selectedVideo, setSelectedVideo] = useState<DriveFile | null>(null)
+  const [videos, setVideos] = useState<TDriveFile[]>([])
+  const [selectedVideo, setSelectedVideo] = useState<TDriveFile | null>(null)
   const [loading, setLoading] = useState(false)
+  const { data: session } = useSession()
+  const { room } = useRoom()
 
   const videoExtensions = [".mp4", ".mkv", ".avi", ".mov"]
+  const isMeAHost = session?.user.id === room?.creator.id
+
+  console.log("IS i admin", isMeAHost)
 
   useEffect(() => {
+    if (!isMeAHost || selectedVideo) return
+
     const fetchVideos = async () => {
       if (!session?.accessToken) return
       setLoading(true)
@@ -38,7 +44,7 @@ export const GoogleDriveContentField = () => {
 
         const data = await res.json()
 
-        const filtered = (data.files || []).filter((file: DriveFile) =>
+        const filtered = (data.files || []).filter((file: TDriveFile) =>
           videoExtensions.some(ext => file.name.toLowerCase().endsWith(ext))
         )
 
@@ -51,40 +57,39 @@ export const GoogleDriveContentField = () => {
     }
 
     fetchVideos()
-  }, [session])
+  }, [])
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">
-      <h2 className="text-xl font-bold">🎥 Відеофайли з Google Drive</h2>
-
-      {loading ? (
-        <p>Завантаження...</p>
-      ) : videos.length === 0 ? (
-        <p>Немає доступних відеофайлів</p>
-      ) : (
-        <ul className="space-y-2 overflow-y-auto">
-          {videos.map(file => (
-            <li key={file.id} className="p-2 rounded shadow-sm flex justify-between items-center">
-              <p>{file.name}</p>
-              <BaseButton 
-                onClick={() => setSelectedVideo(file)} 
-                text="Переглянути"
-              />
-            </li>
-          ))}
-        </ul>
-      )}
-
+      {isMeAHost && (<>
+        {loading ? (
+          <p>Завантаження...</p>
+        ) : videos.length === 0 ? (
+          <p>Немає доступних відеофайлів</p>
+        ) : !selectedVideo && (<>
+          <h2 className="text-xl font-bold">🎥 Відеофайли з Google Drive</h2>
+          <ul className="space-y-2 overflow-y-auto">
+            {videos.map(file => (
+              <li key={file.id} className="p-2 rounded shadow-sm flex justify-between items-center">
+                <p>{file.name}</p>
+                <BaseButton 
+                  onClick={() => setSelectedVideo(file)} 
+                  text="Переглянути"
+                />
+              </li>
+            ))}
+          </ul>
+        </>)}
+      </>)}
       {selectedVideo && (
-        <div className="mt-6">
+        <div className="w-full h-[100%] flex flex-col justify-between">
           <h3 className="text-lg font-semibold mb-2">{selectedVideo.name}</h3>
-          <iframe
-            src={`https://drive.google.com/file/d/${selectedVideo.id}/preview`}
+          <video
+            controls
             width="100%"
             height="480"
-            allow="autoplay"
             className="rounded shadow-lg"
-            allowFullScreen
+            src={`/api/drive/stream/${selectedVideo.id}`}
           />
         </div>
       )}
